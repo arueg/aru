@@ -79,9 +79,9 @@ button:hover {
 
 <body>
 
-<h1 id="title">Аружан, прости меня ❤️</h1>
+<h1>Аружан, прости меня ❤️</h1>
 
-<div class="buttons" id="buttons">
+<div class="buttons">
   <button id="no">😈 Не прощаю</button>
   <button id="yes">💖 Прощаю</button>
 </div>
@@ -90,7 +90,19 @@ button:hover {
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 
-// убегающая кнопка
+// функция перемещения
+function moveButton() {
+  noBtn.style.position = "absolute";
+  noBtn.style.zIndex = "1000";
+
+  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
+// 💻 ПК — от курсора
 document.addEventListener("mousemove", (e) => {
   const rect = noBtn.getBoundingClientRect();
 
@@ -99,16 +111,32 @@ document.addEventListener("mousemove", (e) => {
     e.clientY - (rect.top + rect.height / 2)
   );
 
-  if (distance < 120) {
-    noBtn.style.position = "absolute";
-    noBtn.style.zIndex = "1000";
+  if (distance < 120) moveButton();
+});
 
-    const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-    const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+// 📱 телефон — реагирует на движение пальца
+document.addEventListener("touchmove", (e) => {
+  const touch = e.touches[0];
+  const rect = noBtn.getBoundingClientRect();
 
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-  }
+  const distance = Math.hypot(
+    touch.clientX - (rect.left + rect.width / 2),
+    touch.clientY - (rect.top + rect.height / 2)
+  );
+
+  if (distance < 120) moveButton();
+});
+
+// 📱 защита от клика
+noBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  moveButton();
+});
+
+// 💻 защита от клика
+noBtn.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  moveButton();
 });
 
 // финал
@@ -117,7 +145,7 @@ yesBtn.onclick = () => {
     <div class="final">
       <h1>Ура! Ты лучшая! 🥰</h1>
       <div class="cat-box">
-        <img src="cat.gif" alt="cat">
+        <img src="cat.gif">
       </div>
     </div>
   `;
